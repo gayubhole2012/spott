@@ -1,5 +1,10 @@
+"use client";
+
 import Image from "next/image";
 import Link from "next/link";
+import {SignInButton,UserButton } from "@clerk/nextjs";
+import { Button } from "@/components/ui/button";
+import { Authenticated, Unauthenticated } from "convex/react";
 
 function Header(){
     return(
@@ -21,6 +26,22 @@ function Header(){
           
            {/* Search and location - deskstop only*/}
            {/* Right side action */}
+           <div className= "flex items-center">
+            <Authenticated>
+                {/* create event */}
+                <UserButton />
+              </Authenticated>
+            
+            <Unauthenticated>
+                <SignInButton mode = "modal">
+               
+                  <Button size="sm">Sign In</Button>
+                  </SignInButton >
+              </Unauthenticated>
+              {/* Show the user button when the user is signed in */}
+             
+
+           </div>
            </div>
            {/*mobile search and location - below header*/}
         </nav>

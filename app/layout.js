@@ -1,6 +1,9 @@
 import { ThemeProvider } from "@/components/theme-provider";
 import Header from "@/components/header";
 import "./globals.css";
+import { ConvexClientProvider } from "@/components/convex-client-provider";
+import { ClerkProvider } from "@clerk/nextjs";
+import { dark } from "@clerk/themes";
 
 
 
@@ -22,7 +25,11 @@ export default function RootLayout({ children }) {
             disableTransitionOnChange
           >
         {/* Header */}
-        <Header/>
+        <ClerkProvider appearance={{theme: dark,}}>
+        
+         <ConvexClientProvider>
+          <Header/>
+        
         <main className="relative min-h-screen container mx-auto pt-40 md:pt-32">
           {/*glow */}
 
@@ -42,9 +49,12 @@ export default function RootLayout({ children }) {
         <div className="text-sm text-gray-400">Made with ❤️ by Spott Team</div>
         </footer>
         </main>
+        </ConvexClientProvider>
+         </ClerkProvider>
         </ThemeProvider>
       
       </body>
     </html>
   );
 }
+
