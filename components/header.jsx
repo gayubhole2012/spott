@@ -14,8 +14,7 @@ import { Ticket } from "lucide-react";
 function Header(){
 
     const {isLoading} = useStoreUser();
-const [showUpgradeModel, setshowUpgradeModel] = useState();
-
+const [showUpgradeModel, setShowUpgradeModel] = useState(false);
     return(
         <>
            <nav className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-xl z-20 border-b border-gray-800">
@@ -38,10 +37,8 @@ const [showUpgradeModel, setshowUpgradeModel] = useState();
            <div className= "flex items-center">
            
                 {/* create event */}
-                <Button variant="ghost" size = "sm" onClick = {setshowUpgradeModel}>Pricing</Button>
-                
-                <Button variant ="ghost" size="sm" asChild className={"mr-2"}>
-                    <Link href ="explore">Explore</Link>
+                <Button variant="ghost" size="sm" onClick={() => setShowUpgradeModel(true)}>Pricing</Button>                <Button variant ="ghost" size="sm" asChild className={"mr-2"}>
+                    <Link href ="/explore">Explore</Link>
                 </Button>
                  
                  <Authenticated>
