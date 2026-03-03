@@ -1,45 +1,68 @@
 "use client";
 import { api } from "@/convex/_generated/api";
-import React,{useRef} from "react";
+import React,{useRef} from "react"
 import { useConvexQuery } from "@/hooks/use-convex-query";
 import Autoplay from "embla-carousel-autoplay";
 import { Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext } from "@/components/ui/carousel";
 import { useRouter } from "next/navigation";
 import { Badge } from "@/components/ui/badge";
 import Image from "next/image";
-import { Calendar, MapPin, Users } from "lucide-react";
+import { Calendar, MapPin, Users, ArrowRight, Loader2 } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import EventCard from "@/components/event-card";
 import { format } from "date-fns";
+import { createLocationSlug } from "@/lib/location-utils";
 
 const ExplorePage = () =>{
     
     //fetch current user for location
-     const {data:currentUser} = useConvexQuery(api.users.getCurrentUser);
+     const { data:currentUser } = useConvexQuery(api.users.getCurrentUser);
      const plugin = useRef(Autoplay({ delay: 5000, stopOnInteraction: true}))
      const router = useRouter();
-    const{data:featuredEvents, isLoading: LoadingFeatured} =
+    
+     const { data:featuredEvents, isLoading: LoadingFeatured} =
      useConvexQuery(api.explore.getFeaturedEvents,
         {limit: 3}
      );
 
-     const {data: locationEvents, isLoading: LoadingLocal} = 
-     useConvexQuery(api.explore.getEventsByLocation,{
-        city: currentUser?.location?.city ||"Gurugram",
-        state: currentUser?.location?.state || "Haryana",
+     const { data: localEvents, isLoading: LoadingLocal} = 
+     useConvexQuery(api.explore.getEventsByLocation,
+      {
+        city: currentUser?.location?.city ||"Gurgaon",
+        state: currentUser?.location?.state ||"Haryana",
         limit: 4,
-     });
+     }
+   );
 
      const{data: popularEvents, isLoading: LoadingPopular} =
-     useConvexQuery(api.explore.getPopularEvents,{
+     useConvexQuery(api.explore.getPopularEvents,
+      {
         limit: 6,
-     });
+     }
+   );
 
      const{data: categoryEvents} = useConvexQuery(api.explore.getCategoryCounts);
 
     const handleEventClick = (slug) =>{
             router.push(`/events/${slug}`);
     }
-     
 
+    const handleViewLocalEvents = () => {
+       const city= currentUser?.location?.city ||"Gurgaon";
+       const  state= currentUser?.location?.state ||"Haryana";
+       
+       const slug = createLocationSlug(city, state);
+       router.push(`/explore/${slug}`);
+    }
+      //loding state
+      const isLoading = LoadingFeatured || LoadingLocal || LoadingPopular;
+
+      if(isLoading){
+         return(
+            <div className="min-h-screen flex items-center justify-center">
+               <Loader2 className="w-8 h-8 animate spin text-purple-500"/>
+            </div>  
+      )};
     return(
          <>
     <div className =" pb-12 text-center">
@@ -109,7 +132,35 @@ const ExplorePage = () =>{
 
 
     {/*Local Events*/}
-    
+    {localEvents && localEvents.length > 0 && (
+      <div className="mb-16">
+         <div className="flex items-center justify-between mb-6">
+            <div>
+               <h2 className="text-3xl font-bold mb-1">Event near you</h2>
+               <p className="text-muted-foreground">
+                  Happening in {currentUser?.location?.city  || "your area"}
+               </p>
+            </div>
+            <Button variant="outline" className="gap-2" onClick={handleViewLocalEvents}> 
+               View All <ArrowRight className="w-4 h-4"/>
+               </Button>
+          </div>
+          <div className="grid grid-cols-1 md:grid-cols-2  lg:grid-cols-4 gap-4">
+            {localEvents.map((event) =>(
+               <EventCard
+               key={event._id}
+               event={event}
+               variant="grid"
+               onClick={()=> handleEventClick(event.slug)}
+               />
+            ))}
+         </div>
+
+
+      </div>
+    )}
+
+
 
 
     {/*Browse by category */}

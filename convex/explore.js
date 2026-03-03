@@ -24,38 +24,38 @@ export const getFeaturedEvents = query({
   },
 });
 
-//Get events  by location(city/state)
- export const getEventsByLocation = query({
-    args:{
-         city: v.optional(v.string()),
-        state: v.optional(v.string()),
-        limit: v.optional(v.number()),
-    },
-    handler: async(ctx,args) =>{
-                 const now = Date.now();
+// Get events by location (city/state)
+export const getEventsByLocation = query({
+  args: {
+    city: v.optional(v.string()),
+    state: v.optional(v.string()),
+    limit: v.optional(v.number()),
+  },
+  handler: async (ctx, args) => {
+    const now = Date.now();
 
-           let events = await ctx.db
-           .query("events")
-           .withIndex("by_start_date")
-           .filter((q)=> q.gte(q.field("startDate"),now))  
-           .collect();
+    let events = await ctx.db
+      .query("events")
+      .withIndex("by_start_date")
+    //   .filter((q) => q.gte(q.field("startDate"), now))
+      .collect();
 
-    //filter by city and state
+    // Filter by city or state
     if (args.city) {
-        events = events.filter(
-            (e) => e.city.toLowerCase() === args.city.toLowerCase()
-        );
-    }else if (args.state) {
-        events = events.filter(
-            (e) => e.state.toLowerCase() === args.state.toLowerCase()
-        );
+      events = events.filter(
+        (e) => e.city.toLowerCase() === args.city.toLowerCase()
+      );
+    } else if (args.state) {
+      events = events.filter(
+        (e) => e.state?.toLowerCase() === args.state.toLowerCase()
+      );
     }
 
     return events.slice(0, args.limit ?? 4);
-},
+  },
 });
 
-//get popular events(count high registartion)
+// get popular events(count high registartion)
 
 export const getPopularEvents = query ({
     args:{
@@ -67,7 +67,7 @@ export const getPopularEvents = query ({
            const events = await ctx.db
            .query("events")
            .withIndex("by_start_date")
-           .filter((q)=> q.gte(q.field("startDate"),now))  
+            .filter((q)=> q.gte(q.field("startDate"),now))  
            .collect();
 
     //sort by registration count
