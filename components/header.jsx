@@ -10,11 +10,17 @@ import { Authenticated, Unauthenticated } from "convex/react";
 import { BarLoader } from "react-spinners";
 import { useStoreUser } from "@/hooks/use-store-user"; 
 import { Ticket } from "lucide-react";
+import { OnboardingModal } from "./onbording-modal";
+import { useOnboarding } from "@/hooks/use-onboarding";
+
 
 function Header(){
 
     const {isLoading} = useStoreUser();
-const [showUpgradeModel, setShowUpgradeModel] = useState(false);
+    const [showUpgradeModel, setShowUpgradeModel] = useState(false);
+    const { showOnboarding, handleOnboardingComplete, handleOnboardingSkip } =
+    useOnboarding();
+
     return(
         <>
            <nav className="fixed top-0 left-0 right-0 bg-background/80 backdrop-blur-xl z-20 border-b border-gray-800">
@@ -37,7 +43,8 @@ const [showUpgradeModel, setShowUpgradeModel] = useState(false);
            <div className= "flex items-center">
            
                 {/* create event */}
-                <Button variant="ghost" size="sm" onClick={() => setShowUpgradeModel(true)}>Pricing</Button>                <Button variant ="ghost" size="sm" asChild className={"mr-2"}>
+                <Button variant="ghost" size="sm" onClick={() => setShowUpgradeModel(true)}>Pricing</Button>              
+                  <Button variant ="ghost" size="sm" asChild className={"mr-2"}>
                     <Link href ="/explore">Explore</Link>
                 </Button>
                  
@@ -76,15 +83,25 @@ const [showUpgradeModel, setShowUpgradeModel] = useState(false);
              
 
            </div>
+          
            </div>
            {/*mobile search and location - below header*/}
+
            {/* loader */}
            {isLoading && (
             <div className="absolute bottom-0 left-0 w-full">
             <BarLoader width="100%" color="#a855f7"/>
            </div>)}
         </nav>
+
         {/* modals */}
+         <OnboardingModal
+              isOpen={showOnboarding}
+             onClose={handleOnboardingSkip}
+             onComplete={handleOnboardingComplete} 
+    
+        />
+
         </>
     )
 }
