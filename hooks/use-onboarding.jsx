@@ -9,7 +9,7 @@ import { api } from "@/convex/_generated/api";
 const ATTENDEE_PAGES = ["/explore", "/events", "/my-tickets", "/profile"];
 
 export function useOnboarding() {
-  const [showOnboarding, setShowOnboarding] = useState(true);
+  const [showOnboarding, setShowOnboarding] = useState(false);
   const pathname = usePathname();
   const router = useRouter();
 
@@ -17,6 +17,7 @@ export function useOnboarding() {
     api.users.getCurrentUser
   );
 
+  
   useEffect(() => {
     if (isLoading || !currentUser) return;
 

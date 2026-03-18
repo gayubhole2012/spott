@@ -45,7 +45,10 @@ export  function OnboardingModal({ isOpen, onClose, onComplete }) {
     api.users.completeOnboarding
   );
 
-  const canadianStates = useMemo(() => State.getStatesOfCountry("CA"), []);
+  const canadianStates = useMemo(() =>{
+         return State.getStatesOfCountry("CA");
+   }, []);
+   
 
   const cities = useMemo(() => {
       if(!location.state)return [];
@@ -65,6 +68,23 @@ export  function OnboardingModal({ isOpen, onClose, onComplete }) {
     );
   };
      
+     const handleNext = () => {
+    if(step === 1 &&  selectedInterests.length < 3){
+      toast.error("Please select at least 3 interests");
+      return;
+    }
+
+    if (step === 2 && (!location.city || !location.state)){
+      toast.error("Please select both city and state");
+      return;
+    }
+
+    if(step < 2 ){
+      setStep(step + 1)
+    }else{
+      handleComplete();
+    }
+    };
       
     const handleComplete = async () => {
       try{
@@ -84,23 +104,7 @@ export  function OnboardingModal({ isOpen, onClose, onComplete }) {
       }
       };
 
-    const handleNext = () => {
-    if(step === 1 &&  selectedInterests.length < 3){
-      toast.error("Please select at least 3 interests");
-      return;
-    }
-
-    if (step === 2 && (!location.city || !location.state)){
-      toast.error("Please select both city and state");
-      return;
-    }
-
-    if(step < 2 ){
-      setStep(step + 1)
-    }else{
-      handleComplete();
-    }
-    };
+ 
        const progress = (step / 2) * 100;
 
    
@@ -151,6 +155,7 @@ export  function OnboardingModal({ isOpen, onClose, onComplete }) {
                   </button>
                 ))}
               </div>
+             
              <div className="flex items-center gap-2">
               <Badge
               variant={
@@ -177,7 +182,7 @@ export  function OnboardingModal({ isOpen, onClose, onComplete }) {
                   <Select
                   value={location.state}
                   onValueChange={(value)=>{
-                    setLocation({ ...location,state: value, city: ""});
+                    setLocation({ ...location, state: value, city: ""});
                   }}
                   >
                      <SelectTrigger id="state" className="h-11 w-full">
@@ -213,7 +218,9 @@ export  function OnboardingModal({ isOpen, onClose, onComplete }) {
                       <SelectContent>
                        {cities.length > 0 ? (
                         cities.map((city)=>(
-                          <SelectItem key={city.name} value={city.name}>{city.name}
+                          <SelectItem key={city.name} value={city.name}>
+                            
+                            {city.name}
                             </SelectItem>
                         ))
                       ): (
@@ -230,11 +237,13 @@ export  function OnboardingModal({ isOpen, onClose, onComplete }) {
                 <div className="p-4 bg-purple-500/10 border-purple-500/20 rounded-lg">
                   <div className="flex items-start gap-3">
                     <MapPin className="w-5 h-5 text-purple-500 mt-0.5"/>
-                  </div>
+                  <div>
                   <p className="font-medium">Your location</p>
                   <p className="text-sm text-muted-foreground">
                     {location.city}, {location.state}, {location.country}
                     </p>
+                </div>
+                </div>
                 </div>
               )}
               </div>
@@ -242,7 +251,7 @@ export  function OnboardingModal({ isOpen, onClose, onComplete }) {
           </div>
 
              {/* Actions */}
-        <DialogFooter className = "flex gap-3">
+             <DialogFooter>
           <div className="flex gap-3 pt-4">
             {step > 1 && (
               <Button 
@@ -266,8 +275,8 @@ export  function OnboardingModal({ isOpen, onClose, onComplete }) {
                <ArrowRight className="w-4 h-4" />
           </Button>
           </div>
+          </DialogFooter>
              
-        </DialogFooter>
       </DialogContent>
     </Dialog>
   );

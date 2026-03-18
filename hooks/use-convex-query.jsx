@@ -7,7 +7,7 @@ export const useConvexQuery = (query,...args) =>{
      const result = useQuery(query, ...args);
 
      const [data, setData] = useState(undefined);
-     const[isLoading, setIsLoading] = useState(false);
+     const[isLoading, setIsLoading] = useState(true);
      const[error,setError]= useState(null);
 
      useEffect(()=>{
